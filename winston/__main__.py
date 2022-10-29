@@ -80,8 +80,9 @@ class FFMPEGListener(threading.Thread):
                     NotificationsConfig.discord,
                     json={
                         "content": (
-                            ":warning: SILENCE DETECTED! Instructing Zetta "
-                            "to switch to Auto!"
+                            f":warning: SILENCE DETECTED! Instructing Zetta "
+                            f"to switch to Auto! Last detected max volume was {max_vol}"
+                            f" dB, mean volume was {mean_vol} dB."
                         )
                     },
                 )
