@@ -1,0 +1,27 @@
+[general]
+# Stream URL to pass to FFMpeg
+stream_url = "https://live.urn1350.net/listen"
+
+[audio]
+# Threshold for volume considered ambient
+ambient_db = -30.0
+
+# Number of samples to take
+samples = 20
+
+# Duration of samples to take
+sample_dur = 2.5
+
+# Threshold (pct) of samples that must be below ambient_db to trigger
+threshold = 0.5
+
+[zetta]
+# Zetta Server Host
+host = { env = "ZETTA_SERVER" }
+port = 6969
+
+# Message to send to Zetta when silence detected
+silence_message = "AUTO"
+
+[notifications]
+discord = { env = "DISCORD_HOOK" }
