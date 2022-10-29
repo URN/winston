@@ -101,6 +101,7 @@ class ZettaSocket(threading.Thread):
             logger.debug(f"Sending message: {msg}")
             sock.sendall(msg.encode() + b"\n")
             NOTIF_QUEUE.task_done()
+            logger.debug(f"Sent message. Queue size: {NOTIF_QUEUE.qsize()}")
 
 
 if __name__ == "__main__":
