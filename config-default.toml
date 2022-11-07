@@ -7,7 +7,7 @@ stream_url = "https://live.urn1350.net/listen"
 ambient_db = -30.0
 
 # Number of samples to take
-samples = 20
+samples = 40
 
 # Duration of samples to take
 sample_dur = 2.5
