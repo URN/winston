@@ -1,6 +1,6 @@
 [general]
 # Stream URL to pass to FFMpeg
-stream_url = "https://live.urn1350.net/listen"
+stream_url = "https://live.urn1350.co.uk/listen"
 
 [audio]
 # Threshold for volume considered ambient
