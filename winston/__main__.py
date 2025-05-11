@@ -12,10 +12,6 @@ from winston.config import AudioConfig, GeneralConfig, NotificationsConfig, Zett
 # FFMPeg outputs some weird stuff, but this will contain the volume data
 FFMPEG_REGEX = re.compile("(\\w+): (.+)$")
 
-# Create a queue for notifications from loudness monitor -> Zetta
-NOTIF_QUEUE = queue.Queue()
-
-
 class FFMPEGListener(threading.Thread):
     def run(self):
         samples = []
@@ -74,7 +70,9 @@ class FFMPEGListener(threading.Thread):
 
             if quiet_samps > AudioConfig.samples * AudioConfig.threshold:
                 logger.warning("SILENCE DETECTED! Instructing Zetta to switch to Auto!")
-                NOTIF_QUEUE.put(ZettaConfig.silence_message)
+                z_sock = ZettaSocket()
+                z_sock.start()
+                z_sock.join()
 
                 httpx.post(
                     NotificationsConfig.discord,
@@ -92,16 +90,14 @@ class FFMPEGListener(threading.Thread):
 
 class ZettaSocket(threading.Thread):
     def run(self):
-        logger.info("Opening socket to Zetta")
+        logger.info("Silence detected: opening socket to Zetta")
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.connect((ZettaConfig.host, ZettaConfig.port))
-
-        while True:
-            msg = NOTIF_QUEUE.get()
-            logger.debug(f"Sending message: {msg}")
-            sock.sendall(msg.encode() + b"\n")
-            NOTIF_QUEUE.task_done()
-            logger.debug(f"Sent message. Queue size: {NOTIF_QUEUE.qsize()}")
+    
+        msg = ZettaConfig.silence_message
+        logger.debug(f"Sending message: {msg}")
+        sock.sendall(msg.encode())
+        logger.debug(f"Sent message")
 
 
 if __name__ == "__main__":
@@ -116,8 +112,4 @@ if __name__ == "__main__":
 
     listener = FFMPEGListener()
     listener.start()
-
-    zetta = ZettaSocket()
-    zetta.start()
-
     listener.join()
